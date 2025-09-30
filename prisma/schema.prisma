@@ -24,6 +24,7 @@ model User {
   updatedAt DateTime @updatedAt
   Records   Record[]
 }
+
 model Record {
   id        String   @id @default(uuid())
   text      String
@@ -31,7 +32,8 @@ model Record {
   category  String   @default("Other")
   date      DateTime @default(now())
   userId    String
-  user      User     @relation(fields: [userId], references: [clerkId], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) // ✅ reference User.id
   createdAt DateTime @default(now())
+
   @@index([userId])
 }
