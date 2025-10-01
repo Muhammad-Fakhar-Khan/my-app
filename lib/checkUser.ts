@@ -1,35 +1,32 @@
-import { currentUser } from "@clerk/nextjs/server";
-import prisma from "prisma";
-import { db } from "./db";
-import { use } from "react";
+import { currentUser } from '@clerk/nextjs/server';
 
-export async function checkUser(): Promise<any> {
-    const user = await currentUser();
-    if (!user) {
-        return null;
-    }
+import { db } from './db';
 
-    const dbUser = await db.user.findUnique({
-        where: {
-            id: user.id,
-        },
-    });
+export const checkUser = async () => {
+  const user = await currentUser();
 
-    if( dbUser ) {
-        return dbUser;
-    }
+  if (!user) {
+    return null;
+  }
 
-    const newUser = await db.user.create({
-        data: {
-            id: user.id,
-            clerkId: user.id,
-            name: `${user.firstName} ${user.lastName}`,
-            email: user.emailAddresses[0]?.emailAddress,
-        },
-    });
-    return newUser;
+  const loggedInUser = await db.user.findUnique({
+    where: {
+      clerkUserId: user.id,
+    },
+  });
+
+  if (loggedInUser) {
+    return loggedInUser;
+  }
+
+  const newUser = await db.user.create({
+    data: {
+      clerkUserId: user.id,
+      name: `${user.firstName} ${user.lastName}`,
+      imageUrl: user.imageUrl,
+      email: user.emailAddresses[0]?.emailAddress,
+    },
+  });
+
+  return newUser;
 };
-
-
-
-

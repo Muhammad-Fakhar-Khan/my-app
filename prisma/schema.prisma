@@ -13,27 +13,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
   id        String   @id @default(uuid())
+  clerkUserId String   @unique
   email     String   @unique
-  clerkId   String   @unique
   name      String?
-  image     String?
+  imageUrl String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  Records   Record[]
+  Records  Record[]
 }
 
 model Record {
   id        String   @id @default(uuid())
   text      String
   amount    Float
-  category  String   @default("Other")
+  category  String @default("Other")
   date      DateTime @default(now())
   userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade) // ✅ reference User.id
+  user      User    @relation(fields: [userId], references: [clerkUserId], onDelete: Cascade)
   createdAt DateTime @default(now())
-
   @@index([userId])
 }
