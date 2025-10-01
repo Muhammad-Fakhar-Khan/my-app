@@ -192,6 +192,12 @@ const AddRecord = () => {
                 🚗 Transportation
               </option>
               <option
+                value='Education'
+                className='text-gray-900 dark:text-gray-100'
+              >
+                📚 Education
+              </option>
+              <option
                 value='Shopping'
                 className='text-gray-900 dark:text-gray-100'
               >
@@ -233,12 +239,12 @@ const AddRecord = () => {
               <span className='w-1.5 h-1.5 bg-green-500 rounded-full'></span>
               Amount
               <span className='text-xs text-gray-400 dark:text-gray-500 ml-2 font-normal hidden sm:inline'>
-                Enter amount between $0 and $1,000
+                Enter amount between €0 and €1,000
               </span>
             </label>
             <div className='relative'>
               <span className='absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 font-medium text-sm'>
-                $
+                €
               </span>
               <input
                 type='number'
@@ -282,19 +288,17 @@ const AddRecord = () => {
       {/* Alert Message */}
       {alertMessage && (
         <div
-          className={`mt-4 p-3 rounded-xl border-l-4 backdrop-blur-sm ${
-            alertType === 'success'
+          className={`mt-4 p-3 rounded-xl border-l-4 backdrop-blur-sm ${alertType === 'success'
               ? 'bg-green-50/80 dark:bg-green-900/20 border-l-green-500 text-green-800 dark:text-green-200'
               : 'bg-red-50/80 dark:bg-red-900/20 border-l-red-500 text-red-800 dark:text-red-200'
-          }`}
+            }`}
         >
           <div className='flex items-center gap-2'>
             <div
-              className={`w-6 h-6 rounded-full flex items-center justify-center ${
-                alertType === 'success'
+              className={`w-6 h-6 rounded-full flex items-center justify-center ${alertType === 'success'
                   ? 'bg-green-100 dark:bg-green-800'
                   : 'bg-red-100 dark:bg-red-800'
-              }`}
+                }`}
             >
               <span className='text-sm'>
                 {alertType === 'success' ? '✅' : '⚠️'}

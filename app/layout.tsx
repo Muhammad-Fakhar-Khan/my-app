@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'ExpenseTracker AI - Smart Financial Management',
+  title: 'ExpenseTracker - Smart Financial Management',
   description:
     'AI-powered expense tracking app with intelligent insights, smart categorization, and personalized financial recommendations',
 };
@@ -30,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang='en' suppressHydrationWarning>
       <head>
+        <link rel="icon" href="/favicon.ico" />
         <script
           dangerouslySetInnerHTML={{
             __html: `
