@@ -1,3 +1,4 @@
+// lib/prisma.ts
 import { PrismaClient } from "@prisma/client";
 
 declare global {
@@ -5,12 +6,14 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
-export const db =
+export const prisma =
   globalThis.prisma ||
   new PrismaClient({
-    log: ["query"], // optional: logs queries in dev
+    log: process.env.NODE_ENV === "development" ? ["query"] : [],
   });
 
 if (process.env.NODE_ENV !== "production") {
-  globalThis.prisma = db;
+  globalThis.prisma = prisma;
 }
+
+export default prisma;

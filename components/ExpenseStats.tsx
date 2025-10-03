@@ -4,7 +4,7 @@ import getBestWorstExpense from '@/app/actions/getBestWorstExpense';
 
 const ExpenseStats = async () => {
   try {
-    // Fetch both average and range data
+    // Fetch both total and range data
     const [userRecordResult, rangeResult] = await Promise.all([
       getUserRecord(),
       getBestWorstExpense(),
@@ -13,11 +13,8 @@ const ExpenseStats = async () => {
     const { record, daysWithRecords } = userRecordResult;
     const { bestExpense, worstExpense } = rangeResult;
 
-    // Calculate average expense
+    // Total Spending
     const validRecord = record || 0;
-    const validDays =
-      daysWithRecords && daysWithRecords > 0 ? daysWithRecords : 1;
-    const averageExpense = validRecord / validDays;
 
     return (
       <div className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 sm:p-6 rounded-2xl shadow-xl border border-gray-100/50 dark:border-gray-700/50 hover:shadow-2xl'>
@@ -36,18 +33,18 @@ const ExpenseStats = async () => {
         </div>
 
         <div className='space-y-3 sm:space-y-4'>
-          {/* Average Daily Spending */}
+          {/* Total Spending */}
           <div className='bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 rounded-xl p-3 sm:p-4 border border-gray-200/50 dark:border-gray-600/50'>
             <div className='text-center'>
               <p className='text-xs font-medium text-gray-600 dark:text-gray-300 mb-2 tracking-wide uppercase'>
-                Average Daily Spending
+                Total Spending
               </p>
-              <div className='text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2'>
-                €{averageExpense.toFixed(2)}
+              <div className='text-2xl sm:text-3xl font-bold text-gray-700 dark:text-gray-200 mb-2'>
+                €{validRecord.toFixed(2)}
               </div>
-              <div className='inline-flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-2 py-1 rounded-full text-xs font-medium'>
-                <span className='w-1.5 h-1.5 bg-emerald-500 dark:bg-emerald-400 rounded-full'></span>
-                Based on {validDays} days with expenses
+              <div className='inline-flex items-center gap-2 bg-gray-50 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full text-xs font-medium'>
+                <span className='w-1.5 h-1.5 bg-gray-500 dark:bg-gray-400 rounded-full'></span>
+                Across {daysWithRecords || 0} days
               </div>
             </div>
           </div>

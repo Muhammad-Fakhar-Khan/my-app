@@ -13,6 +13,7 @@
     "@clerk/nextjs": "^6.24.0",
     "@clerk/themes": "^2.2.55",
     "@prisma/client": "^6.16.3",
+    "@supabase/supabase-js": "^2.58.0",
     "chart.js": "^4.5.0",
     "next": "15.3.5",
     "openai": "^5.9.0",
