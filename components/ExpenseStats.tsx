@@ -1,7 +1,7 @@
 import React from "react";
 import getUserRecord from "@/app/actions/getUserRecord";
 import getBestWorstExpense from "@/app/actions/getBestWorstExpense";
-import getMonthlyExpenses from "@/app/actions/getMonthlyExpenses";
+import { getMonthlyExpenses } from "@/app/actions/getMonthlyExpenses";
 
 const ExpenseStats = async () => {
   try {
@@ -14,11 +14,11 @@ const ExpenseStats = async () => {
 
     const { record, daysWithRecords } = userRecordResult;
     const { bestExpense, worstExpense } = rangeResult;
-
-    const validRecord = record || 0;
+    const validRecord = Number(record) || 0;
 
     return (
       <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 sm:p-6 rounded-2xl shadow-xl border border-gray-100/50 dark:border-gray-700/50 hover:shadow-2xl">
+        {/* Header */}
         <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
             <span className="text-white text-sm sm:text-lg">📊</span>
@@ -50,20 +50,22 @@ const ExpenseStats = async () => {
             </div>
           </div>
 
-          {/* Monthly Breakdown */}
-          {monthlyExpenses && Object.keys(monthlyExpenses).length > 0 && (
+          {/* ✅ Monthly Breakdown (Fixed) */}
+          {monthlyExpenses && monthlyExpenses.length > 0 && (
             <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 rounded-xl p-3 sm:p-4 border border-gray-200/50 dark:border-gray-600/50 mt-4">
               <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
                 Monthly Breakdown
               </h4>
               <ul className="space-y-1">
-                {Object.entries(monthlyExpenses).map(([month, total]) => (
+                {monthlyExpenses.map(({ month, total }) => (
                   <li
                     key={month}
                     className="flex justify-between text-gray-700 dark:text-gray-300 text-sm"
                   >
                     <span>{month}</span>
-                    <span className="font-bold">€{(total as number).toFixed(2)}</span>
+                    <span className="font-bold">
+                      €{Number(total).toFixed(2)}
+                    </span>
                   </li>
                 ))}
               </ul>
