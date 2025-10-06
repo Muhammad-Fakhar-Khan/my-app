@@ -5,36 +5,36 @@ import { suggestCategory } from '@/app/actions/suggestCategory';
 
 const AddRecord = () => {
   const formRef = useRef<HTMLFormElement>(null);
-  const [amount, setAmount] = useState(50); // Default value for expense amount
-  const [alertMessage, setAlertMessage] = useState<string | null>(null); // State for alert message
-  const [alertType, setAlertType] = useState<'success' | 'error' | null>(null); // State for alert type
-  const [isLoading, setIsLoading] = useState(false); // State for loading spinner
-  const [category, setCategory] = useState(''); // State for selected expense category
-  const [description, setDescription] = useState(''); // State for expense description
-  const [isCategorizingAI, setIsCategorizingAI] = useState(false); // State for AI categorization loading
+  const [amount, setAmount] = useState(50);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [alertType, setAlertType] = useState<'success' | 'error' | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [category, setCategory] = useState('');
+  const [description, setDescription] = useState('');
+  const [isCategorizingAI, setIsCategorizingAI] = useState(false);
 
   const clientAction = async (formData: FormData) => {
-    setIsLoading(true); // Show spinner
-    setAlertMessage(null); // Clear previous messages
+    setIsLoading(true);
+    setAlertMessage(null);
 
-    formData.set('amount', amount.toString()); // Add the amount value to the form data
-    formData.set('category', category); // Add the selected category to the form data
+    formData.set('amount', amount.toString());
+    formData.set('category', category);
 
-    const { error } = await addExpenseRecord(formData); // Removed `data` since it's unused
+    const { error } = await addExpenseRecord(formData);
 
     if (error) {
       setAlertMessage(`Error: ${error}`);
-      setAlertType('error'); // Set alert type to error
+      setAlertType('error');
     } else {
       setAlertMessage('Expense record added successfully!');
-      setAlertType('success'); // Set alert type to success
+      setAlertType('success');
       formRef.current?.reset();
-      setAmount(50); // Reset the amount to the default value
-      setCategory(''); // Reset the category
-      setDescription(''); // Reset the description
+      setAmount(50);
+      setCategory('');
+      setDescription('');
     }
 
-    setIsLoading(false); // Hide spinner
+    setIsLoading(false);
   };
 
   const handleAISuggestCategory = async () => {
@@ -80,6 +80,7 @@ const AddRecord = () => {
           </p>
         </div>
       </div>
+
       <form
         ref={formRef}
         onSubmit={(e) => {
@@ -148,14 +149,21 @@ const AddRecord = () => {
               id='date'
               className='w-full px-3 py-2.5 bg-white/70 dark:bg-gray-800/70 border-2 border-gray-200/80 dark:border-gray-600/80 rounded-xl focus:ring-2 focus:ring-emerald-500/30 focus:bg-white dark:focus:bg-gray-700/90 focus:border-emerald-400 dark:focus:border-emerald-400 text-gray-900 dark:text-gray-100 text-sm shadow-sm hover:shadow-md transition-all duration-200'
               required
-              onFocus={(e) => e.target.showPicker()}
+              // ✅ Fixed: use onClick instead of onFocus for showPicker
+              onClick={(e) => {
+                try {
+                  e.currentTarget.showPicker?.();
+                } catch {
+                  // ignore if unsupported
+                }
+              }}
             />
           </div>
         </div>
 
-        {/* Category Selection and Amount */}
+        {/* Category and Amount */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4 p-3 sm:p-4 bg-gradient-to-r from-green-50/50 to-emerald-50/50 dark:from-green-900/10 dark:to-emerald-900/10 rounded-xl border border-green-100/50 dark:border-green-800/50'>
-          {/* Category Selection */}
+          {/* Category */}
           <div className='space-y-1.5'>
             <label
               htmlFor='category'
@@ -175,58 +183,17 @@ const AddRecord = () => {
               className='w-full px-3 py-2.5 bg-white/70 dark:bg-gray-800/70 border-2 border-gray-200/80 dark:border-gray-600/80 rounded-xl focus:ring-2 focus:ring-emerald-500/30 focus:bg-white dark:focus:bg-gray-700/90 focus:border-emerald-400 dark:focus:border-emerald-400 text-gray-900 dark:text-gray-100 cursor-pointer text-sm shadow-sm hover:shadow-md transition-all duration-200'
               required
             >
-              <option
-                value=''
-                disabled
-                className='text-gray-400 dark:text-gray-500'
-              >
+              <option value='' disabled className='text-gray-400 dark:text-gray-500'>
                 Select category...
               </option>
-              <option value='Food' className='text-gray-900 dark:text-gray-100'>
-                🍔 Food & Dining
-              </option>
-              <option
-                value='Transportation'
-                className='text-gray-900 dark:text-gray-100'
-              >
-                🚗 Transportation
-              </option>
-              <option
-                value='Education'
-                className='text-gray-900 dark:text-gray-100'
-              >
-                📚 Education
-              </option>
-              <option
-                value='Shopping'
-                className='text-gray-900 dark:text-gray-100'
-              >
-                🛒 Shopping
-              </option>
-              <option
-                value='Entertainment'
-                className='text-gray-900 dark:text-gray-100'
-              >
-                🎬 Entertainment
-              </option>
-              <option
-                value='Bills'
-                className='text-gray-900 dark:text-gray-100'
-              >
-                💡 Bills & Utilities
-              </option>
-              <option
-                value='Healthcare'
-                className='text-gray-900 dark:text-gray-100'
-              >
-                🏥 Healthcare
-              </option>
-              <option
-                value='Other'
-                className='text-gray-900 dark:text-gray-100'
-              >
-                📦 Other
-              </option>
+              <option value='Food'>🍔 Food & Dining</option>
+              <option value='Transportation'>🚗 Transportation</option>
+              <option value='Education'>📚 Education</option>
+              <option value='Shopping'>🛒 Shopping</option>
+              <option value='Entertainment'>🎬 Entertainment</option>
+              <option value='Bills'>💡 Bills & Utilities</option>
+              <option value='Healthcare'>🏥 Healthcare</option>
+              <option value='Other'>📦 Other</option>
             </select>
           </div>
 
@@ -255,7 +222,7 @@ const AddRecord = () => {
                 step='0.01'
                 value={amount}
                 onChange={(e) => setAmount(parseFloat(e.target.value) || 0)}
-                className='w-full pl-6 pr-3 py-2.5 bg-white/70 dark:bg-gray-800/70 border-2 border-gray-200/80 dark:border-gray-600/80 rounded-xl focus:ring-2 focus:ring-emerald-500/30 focus:bg-white dark:focus:bg-gray-700/90 focus:border-emerald-400 dark:focus:border-emerald-400 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200'
+                className='w-full pl-6 pr-3 py-2.5 bg-white/70 dark:bg-gray-800/70 border-2 border-gray-200/80 dark:border-gray-600/80 rounded-xl focus:ring-2 focus:ring-emerald-500/30 focus:bg-white dark:focus:bg-gray-700/90 focus:border-emerald-400 dark:focus:border-emerald-400 text-gray-900 dark:text-gray-100 text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200'
                 placeholder='0.00'
                 required
               />
@@ -263,7 +230,7 @@ const AddRecord = () => {
           </div>
         </div>
 
-        {/* Submit Button */}
+        {/* Submit */}
         <button
           type='submit'
           className='w-full relative overflow-hidden bg-gradient-to-r from-emerald-600 via-green-500 to-teal-500 hover:from-emerald-700 hover:via-green-600 hover:to-teal-600 text-white px-4 py-3 sm:px-5 sm:py-4 rounded-xl font-semibold shadow-xl hover:shadow-2xl group transition-all duration-300 border-2 border-transparent hover:border-white/20 text-sm sm:text-base'
@@ -285,20 +252,22 @@ const AddRecord = () => {
         </button>
       </form>
 
-      {/* Alert Message */}
+      {/* Alert */}
       {alertMessage && (
         <div
-          className={`mt-4 p-3 rounded-xl border-l-4 backdrop-blur-sm ${alertType === 'success'
+          className={`mt-4 p-3 rounded-xl border-l-4 backdrop-blur-sm ${
+            alertType === 'success'
               ? 'bg-green-50/80 dark:bg-green-900/20 border-l-green-500 text-green-800 dark:text-green-200'
               : 'bg-red-50/80 dark:bg-red-900/20 border-l-red-500 text-red-800 dark:text-red-200'
-            }`}
+          }`}
         >
           <div className='flex items-center gap-2'>
             <div
-              className={`w-6 h-6 rounded-full flex items-center justify-center ${alertType === 'success'
+              className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                alertType === 'success'
                   ? 'bg-green-100 dark:bg-green-800'
                   : 'bg-red-100 dark:bg-red-800'
-                }`}
+              }`}
             >
               <span className='text-sm'>
                 {alertType === 'success' ? '✅' : '⚠️'}

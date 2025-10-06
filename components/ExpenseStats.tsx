@@ -1,91 +1,112 @@
-import React from 'react';
-import getUserRecord from '@/app/actions/getUserRecord';
-import getBestWorstExpense from '@/app/actions/getBestWorstExpense';
+import React from "react";
+import getUserRecord from "@/app/actions/getUserRecord";
+import getBestWorstExpense from "@/app/actions/getBestWorstExpense";
+import getMonthlyExpenses from "@/app/actions/getMonthlyExpenses";
 
 const ExpenseStats = async () => {
   try {
-    // Fetch both total and range data
-    const [userRecordResult, rangeResult] = await Promise.all([
+    // Fetch all required stats in parallel
+    const [userRecordResult, rangeResult, monthlyExpenses] = await Promise.all([
       getUserRecord(),
       getBestWorstExpense(),
+      getMonthlyExpenses(),
     ]);
 
     const { record, daysWithRecords } = userRecordResult;
     const { bestExpense, worstExpense } = rangeResult;
 
-    // Total Spending
     const validRecord = record || 0;
 
     return (
-      <div className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 sm:p-6 rounded-2xl shadow-xl border border-gray-100/50 dark:border-gray-700/50 hover:shadow-2xl'>
-        <div className='flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6'>
-          <div className='w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg'>
-            <span className='text-white text-sm sm:text-lg'>📊</span>
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-4 sm:p-6 rounded-2xl shadow-xl border border-gray-100/50 dark:border-gray-700/50 hover:shadow-2xl">
+        <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
+            <span className="text-white text-sm sm:text-lg">📊</span>
           </div>
           <div>
-            <h3 className='text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100'>
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">
               Expense Statistics
             </h3>
-            <p className='text-xs text-gray-500 dark:text-gray-400 mt-0.5'>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
               Your spending insights and ranges
             </p>
           </div>
         </div>
 
-        <div className='space-y-3 sm:space-y-4'>
+        <div className="space-y-3 sm:space-y-4">
           {/* Total Spending */}
-          <div className='bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 rounded-xl p-3 sm:p-4 border border-gray-200/50 dark:border-gray-600/50'>
-            <div className='text-center'>
-              <p className='text-xs font-medium text-gray-600 dark:text-gray-300 mb-2 tracking-wide uppercase'>
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 rounded-xl p-3 sm:p-4 border border-gray-200/50 dark:border-gray-600/50">
+            <div className="text-center">
+              <p className="text-xs font-medium text-gray-600 dark:text-gray-300 mb-2 tracking-wide uppercase">
                 Total Spending
               </p>
-              <div className='text-2xl sm:text-3xl font-bold text-gray-700 dark:text-gray-200 mb-2'>
+              <div className="text-2xl sm:text-3xl font-bold text-gray-700 dark:text-gray-200 mb-2">
                 €{validRecord.toFixed(2)}
               </div>
-              <div className='inline-flex items-center gap-2 bg-gray-50 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full text-xs font-medium'>
-                <span className='w-1.5 h-1.5 bg-gray-500 dark:bg-gray-400 rounded-full'></span>
+              <div className="inline-flex items-center gap-2 bg-gray-50 dark:bg-gray-900/30 text-gray-700 dark:text-gray-300 px-2 py-1 rounded-full text-xs font-medium">
+                <span className="w-1.5 h-1.5 bg-gray-500 dark:bg-gray-400 rounded-full"></span>
                 Across {daysWithRecords || 0} days
               </div>
             </div>
           </div>
 
+          {/* Monthly Breakdown */}
+          {monthlyExpenses && Object.keys(monthlyExpenses).length > 0 && (
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-600 rounded-xl p-3 sm:p-4 border border-gray-200/50 dark:border-gray-600/50 mt-4">
+              <h4 className="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">
+                Monthly Breakdown
+              </h4>
+              <ul className="space-y-1">
+                {Object.entries(monthlyExpenses).map(([month, total]) => (
+                  <li
+                    key={month}
+                    className="flex justify-between text-gray-700 dark:text-gray-300 text-sm"
+                  >
+                    <span>{month}</span>
+                    <span className="font-bold">€{(total as number).toFixed(2)}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {/* Expense Range */}
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3'>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
             {/* Highest Expense */}
-            <div className='bg-red-50/80 dark:bg-red-900/20 backdrop-blur-sm p-3 sm:p-4 rounded-xl border-l-4 border-l-red-500 hover:bg-red-50 dark:hover:bg-red-900/30'>
-              <div className='flex items-center gap-2'>
-                <div className='w-6 h-6 bg-red-100 dark:bg-red-800 rounded-xl flex items-center justify-center flex-shrink-0'>
-                  <span className='text-sm leading-none text-red-600 dark:text-red-300 font-bold'>
+            <div className="bg-red-50/80 dark:bg-red-900/20 backdrop-blur-sm p-3 sm:p-4 rounded-xl border-l-4 border-l-red-500 hover:bg-red-50 dark:hover:bg-red-900/30">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-red-100 dark:bg-red-800 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <span className="text-sm leading-none text-red-600 dark:text-red-300 font-bold">
                     ↑
                   </span>
                 </div>
-                <div className='flex-1'>
-                  <h4 className='font-bold text-gray-900 dark:text-gray-100 text-xs mb-0.5'>
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-900 dark:text-gray-100 text-xs mb-0.5">
                     Highest
                   </h4>
-                  <p className='text-lg font-bold text-red-600 dark:text-red-300'>
-                    {bestExpense !== undefined ? `€${bestExpense}` : 'No data'}
+                  <p className="text-lg font-bold text-red-600 dark:text-red-300">
+                    {bestExpense !== undefined ? `€${bestExpense}` : "No data"}
                   </p>
                 </div>
               </div>
             </div>
 
             {/* Lowest Expense */}
-            <div className='bg-green-50/80 dark:bg-green-900/20 backdrop-blur-sm p-3 sm:p-4 rounded-xl border-l-4 border-l-green-500 hover:bg-green-50 dark:hover:bg-green-900/30'>
-              <div className='flex items-center gap-2'>
-                <div className='w-6 h-6 bg-green-100 dark:bg-green-800 rounded-xl flex items-center justify-center flex-shrink-0'>
-                  <span className='text-sm leading-none text-green-600 dark:text-green-300 font-bold'>
+            <div className="bg-green-50/80 dark:bg-green-900/20 backdrop-blur-sm p-3 sm:p-4 rounded-xl border-l-4 border-l-green-500 hover:bg-green-50 dark:hover:bg-green-900/30">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-green-100 dark:bg-green-800 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <span className="text-sm leading-none text-green-600 dark:text-green-300 font-bold">
                     ↓
                   </span>
                 </div>
-                <div className='flex-1'>
-                  <h4 className='font-bold text-gray-900 dark:text-gray-100 text-xs mb-0.5'>
+                <div className="flex-1">
+                  <h4 className="font-bold text-gray-900 dark:text-gray-100 text-xs mb-0.5">
                     Lowest
                   </h4>
-                  <p className='text-lg font-bold text-green-600 dark:text-green-300'>
+                  <p className="text-lg font-bold text-green-600 dark:text-green-300">
                     {worstExpense !== undefined
                       ? `€${worstExpense}`
-                      : 'No data'}
+                      : "No data"}
                   </p>
                 </div>
               </div>
@@ -95,32 +116,32 @@ const ExpenseStats = async () => {
       </div>
     );
   } catch (error) {
-    console.error('Error fetching expense statistics:', error);
+    console.error("Error fetching expense statistics:", error);
     return (
-      <div className='bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-gray-100/50 dark:border-gray-700/50 hover:shadow-2xl'>
-        <div className='flex items-center gap-3 mb-6'>
-          <div className='w-12 h-12 bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg'>
-            <span className='text-white text-xl'>📊</span>
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 rounded-2xl shadow-xl border border-gray-100/50 dark:border-gray-700/50 hover:shadow-2xl">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 via-green-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
+            <span className="text-white text-xl">📊</span>
           </div>
           <div>
-            <h3 className='text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent'>
+            <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-gray-100 dark:to-gray-300 bg-clip-text text-transparent">
               Expense Statistics
             </h3>
-            <p className='text-sm text-gray-500 dark:text-gray-400 mt-1'>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               Your spending insights and ranges
             </p>
           </div>
         </div>
-        <div className='bg-red-50/80 dark:bg-red-900/20 backdrop-blur-sm p-6 rounded-xl border-l-4 border-l-red-500'>
-          <div className='flex items-center gap-3 mb-2'>
-            <div className='w-8 h-8 bg-red-100 dark:bg-red-800 rounded-full flex items-center justify-center'>
-              <span className='text-lg'>⚠️</span>
+        <div className="bg-red-50/80 dark:bg-red-900/20 backdrop-blur-sm p-6 rounded-xl border-l-4 border-l-red-500">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-8 h-8 bg-red-100 dark:bg-red-800 rounded-full flex items-center justify-center">
+              <span className="text-lg">⚠️</span>
             </div>
-            <p className='text-red-800 dark:text-red-300 font-semibold'>
+            <p className="text-red-800 dark:text-red-300 font-semibold">
               Unable to load expense statistics
             </p>
           </div>
-          <p className='text-red-700 dark:text-red-400 text-sm ml-11'>
+          <p className="text-red-700 dark:text-red-400 text-sm ml-11">
             Please try again later
           </p>
         </div>
